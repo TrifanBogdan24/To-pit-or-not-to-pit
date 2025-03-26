@@ -1,0 +1,15 @@
+==3180== Memcheck, a memory error detector
+==3180== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3180== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==3180== Command: ./../src/main input/sensors_clear_hard_5.dat
+==3180== Parent PID: 3179
+==3180== 
+==3180== 
+==3180== HEAP SUMMARY:
+==3180==     in use at exit: 0 bytes in 0 blocks
+==3180==   total heap usage: 919 allocs, 919 frees, 56,694 bytes allocated
+==3180== 
+==3180== All heap blocks were freed -- no leaks are possible
+==3180== 
+==3180== For lists of detected and suppressed errors, rerun with: -s
+==3180== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -1,0 +1,15 @@
+==3063== Memcheck, a memory error detector
+==3063== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3063== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==3063== Command: ./../src/main input/sensors_clear_easy_2.dat
+==3063== Parent PID: 3062
+==3063== 
+==3063== 
+==3063== HEAP SUMMARY:
+==3063==     in use at exit: 0 bytes in 0 blocks
+==3063==   total heap usage: 889 allocs, 889 frees, 54,990 bytes allocated
+==3063== 
+==3063== All heap blocks were freed -- no leaks are possible
+==3063== 
+==3063== For lists of detected and suppressed errors, rerun with: -s
+==3063== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

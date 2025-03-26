@@ -1,0 +1,17 @@
+TRIFAN BOGDAN-CRISTIAN, 312CD
+
+Local, am obtinut 100 de puncte.
+
+ALOCARE
+    Pentru a aloca memorie si a accesa campul de tip pointer numit 'sensor_data' (din structul pentru senzori), va trebui sa realizam casting la pointeri in functie de tipul de senzor, intrucat structurile de date asociate acestora diferi. Spre exemplu, campul 'data_sensor' al unui senzor de tip TIRE va indica catre tipul de date 'tire_sensor', iar celalalt, catre 'power_management_unit'.
+
+SORTARE
+    La sortarea senzorilor din pointeri, trebuie sa tinem cont de faptul ca trebuie pastrata ordine in care senzorii de acelasi tip apar.de exemplu : TIRE_1, TIRE_2, PMU_1, PMU_2, TIRE_3, PMU_3 => PMU_1, PMU_2, PMU_3, TIRE_1, TIRE_2, TIRE_3
+    O metoda de sortatre, pe care eu am considerat-o eficienta si usor de implementat, consta in a lua un pointer auxiliar de senzori, initial vid si vom parcurge senzorii (de la stanga la dreapta) de doua ori: la prima iteratie vom adauga in pointer-ul auxiliar doar senzorii PMU, iar in a doua, doar pe cei care masoara parametrii anvelopelor. La final, vom inlocui (fiecare element al) pointer - ul(ui) initial si cel auxiliar. Astfel, sortarea are o complexitate in timp de O(2 * N) = O(N) ; N = numarul total de senzori. 
+
+ANALYZE (APEL DE FUNCTII)
+    Pentru a apela functiile, creem un pointer de opt elemente, care vor indica catre toate functiile. Pentru apelul efectiv al functiei, va trebui sa facem casting la pointer pentru a extrage functia dorita. Apelul se face folosind campul senso_data al structului pentru senzori.
+
+DEZALOCARE
+    Pentru stergere senzorilor cu valori eronate, am definit o functie care intoarce 1 daca senzori este optim, altminteri returneaza 0. Daca senzorul indica valori malitioase, o sa il mutam pe ultima pozitie din pointer - ul de senzori, il stergem si decrementam numarul de senzori memorati in pointer.
+    Pentru dezalocarea corecta a memoriei, este necesar sa dam free() la campul 'data_sensor' al fiecarui element din pointer, iar mai apoi, de abia la final, dam free() la pointer - ul de senzori.
