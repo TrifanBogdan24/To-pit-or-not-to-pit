@@ -1,2 +1,2 @@
-# 📟 Memory Management for Sensors
+# 🏎️ To pit or not pit...
 
