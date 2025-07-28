@@ -5,7 +5,6 @@ to analyze the sensors of a Ferrari **Formula 1** car.
 
 
 > ⚠️ Spoiler Alert!
->
 > This is **NOT** a **data acquisition** project.
 
 ## Story Telling
@@ -20,9 +19,7 @@ develop solutions to detect and eliminate bad data,
 ensuring the team works with accurate insights.
 By doing so, I played a direct role in helping Ferrari chase victory on the F1 track.
 
-
-## My Implementation
-
+## Sensor Types
 
 In this scenario, there are 2 types of faulty sensors in a Formula 1 car:
 1. **PMU** (Power Management Unit) Sensors
@@ -31,7 +28,109 @@ In this scenario, there are 2 types of faulty sensors in a Formula 1 car:
 Each sensor type has its priority and associated functions.
 
 
+
+## 👨‍💻 Software Commands I Provide to Ferrari Engineers
+
+### 1. Simple Print (`print <index>`)
+---
+
+It will the print the data received by the sensor the given index.
+
+In the case of an invalid value, the following error message will appear: `Index not in range!`.
+
+
+Expected output for **PMU Sensors**:
+```
+Power Management Unit
+Voltage: <voltage>
+Current: <current>
+Power Consumption: <power_consumption>
+Energy Regen: <energy_regen>
+Energy Storage: <energy_storage>
+```
+
+Expected output for **Tire Sensors**:
+```
+Tire Sensor
+Pressure: <pressure>
+Temperature: <temperature>
+Wear Level: <wear_level>
+Performance Score: <computed score>/Performance Score: Not Calculated
+```
+
+
+
+### 2. Priority Printing
+---
+
+It will show data from all sensors, sorting after their type:
+**PMU sensors** are more important than **Tire Sensors**.
+
+
+### 3. Analyze (`analyze <index>`)
+---
+
+It will call the functions associated to the given sensor.
+
+Like **imple print**, the `Index not in range!` will appear if the index is invalid.
+
+### 4. `clear`
+---
+
+It will delete mulfunctioning sensor (containing error-prone values) from the array of sensors.
+
+
+### 5. `exit`
+---
+
+Gracefully shut down the program after free-ing the memory.
+
+
+
+## Data Structures
+
+
+
+Generic Sensor:
+```c
+typedef struct {
+	enum sensor_type sensor_type;
+	void *sensor_data;
+	int nr_operations;
+	int *operations_idxs;
+} sensor;
+```
+
+
+PMU Sensor:
+```c
+typedef struct __attribute__((__packed__)) {
+	float voltage;
+	float current;
+	float power_consumption;
+	int energy_regen;
+	int energy_storage;
+} power_management_unit;
+```
+
+
+Tire Sensor:
+```c
+typedef struct __attribute__((__packed__)) {
+	float pressure;
+	float temperature;
+	int wear_level;
+	int performace_score;
+} tire_sensor;
+
+```
+
+
+
+## 👨‍💻 My Implementation
+
 ### Sensor Priority
+---
 
 
 The values of **Power Management Unit** sensors
@@ -49,6 +148,8 @@ PMU_1 PMU_2 PMU_3 PMU_4 Tire_1 Tire_2 Tire_3 Tire_4 Tire_5
 ```
 
 ### Sorting Sensors
+---
+
 
 When sorting sensors from pointers,
 I took into account the fact that order (in which sensors of the same type appear) must be kept.
@@ -75,6 +176,7 @@ where **N** is the total number of sensors.
 
 
 ### Analyze Sensors (Function call)
+---
 
 
 
