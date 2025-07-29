@@ -1,6 +1,6 @@
 # 🏎️ To pit or not pit...
 
-A **memory management** app, designed in **C**
+A **memory management** CLI app, built in **C**
 to analyze the sensors of a Ferrari **Formula 1** car.
 
 
@@ -9,7 +9,7 @@ to analyze the sensors of a Ferrari **Formula 1** car.
 
 ## Story Telling
 
-In this **fictional scenario I created for my project**,
+In this **fictional scenario in which my project takes place**,
 Ferrari engineers needed my software expertise to stay competitive during F1 season.
 They discovered that faulty sensors (likely cheap ones from AliExpress 😉)
 were feeding incorrect data into their systems, affecting performance decisions.
@@ -25,7 +25,7 @@ In this scenario, there are 2 types of faulty sensors in a Formula 1 car:
 1. **PMU** (Power Management Unit) Sensors
 2. **Tire** Sensors
 
-Each sensor type has its priority and associated functions.
+Each sensor type has its priority and associated function callss.
 
 
 
@@ -86,12 +86,32 @@ It will delete mulfunctioning sensor (containing error-prone values) from the ar
 Gracefully shut down the program after free-ing the memory.
 
 
+## ▶️ How to run the CLI app
+
+
+```sh
+cd src/
+make
+./main ../checker/input/<sensor-file>.dat < ../checker/input/<command-file>.in
+```
+
+Example:
+
+```sh
+./main ../checker/input/sensors_print_easy_1.dat < ../checker/input/commands_print_easy_1.in
+```
+
+🧹 Don't forget to remove the object and binary files:
+```sh
+make clean
+```
+
 
 ## Data Structures
 
 
 
-Generic Sensor:
+Sensor:
 ```c
 typedef struct {
 	enum sensor_type sensor_type;
@@ -204,4 +224,56 @@ if (ZERO <= indice_senzor && indice_senzor <= nr_total_senzori - UNU) {
             .sensor_data);
     }
 }
+```
+
+
+
+
+
+## 🧪 Automated Tests
+
+
+### Prerequisites
+---
+
+Install `valgrind`:
+
+```sh
+sudo apt update && sudo apt install -y valgrind
+```
+
+> The above command is specific to Ubuntu/Debian systems.
+
+
+```sh
+cd checker/
+chmod +x ./cs/cs.sh
+```
+
+> To run the tests, you must be in `checker/` directory.
+
+
+### Run all tests with **automated checker**
+---
+
+```sh
+python3 checker.py --all
+```
+
+
+### With `valgrind` (Memory Leak Check)
+---
+
+```sh
+python3 checker.py --all --valgrind
+```
+
+
+### Run specific tests
+---
+
+```sh
+python3 checker.py --print --valgrind
+python3 checker.py --clear --valgrind
+python3 checker.py --analyse --valgrind
 ```
