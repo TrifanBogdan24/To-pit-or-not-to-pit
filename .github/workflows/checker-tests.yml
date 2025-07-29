@@ -1,0 +1,32 @@
+name: Run Checker Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (Python3 & Valgrind)
+        run: |
+          sudo apt update
+          sudo apt install -y python3 valgrind
+
+      - name: Change to checker directory
+        working-directory: ./checker
+        run: echo "Changed to checker directory"
+
+      - name: Run implementation correctness tests
+        working-directory: ./checker
+        run: python3 checker.py --all
+
+      - name: Run memory check with Valgrind
+        working-directory: ./checker
+        run: python3 checker.py --all --valgrind
