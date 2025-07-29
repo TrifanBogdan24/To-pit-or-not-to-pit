@@ -107,7 +107,7 @@ make clean
 ```
 
 
-## Data Structures
+## Data Structures for Sensors
 
 
 
@@ -232,48 +232,19 @@ if (ZERO <= indice_senzor && indice_senzor <= nr_total_senzori - UNU) {
 
 ## 🧪 Automated Tests
 
+Curious how everything gets tested automatically?
 
-### Prerequisites
----
-
-Install `valgrind`:
-
-```sh
-sudo apt update && sudo apt install -y valgrind
-```
-
-> The above command is specific to Ubuntu/Debian systems.
+Take a look at the [checker/](./checker/) folder.
 
 
-```sh
-cd checker/
-chmod +x ./cs/cs.sh
-```
+## ✅ GitHub Actions | CI Pipeline
 
-> To run the tests, you must be in `checker/` directory.
+No test suite is complete without **Continous Integration**.
 
+I've set up the automated checker with **GitHub Actions**
+to run tests on every push and pull request.
 
-### Run all tests with **automated checker**
----
-
-```sh
-python3 checker.py --all
-```
+Take a look at the CI workflow here:
+[.github/workflows/checker-tests.yml](.github/workflows/checker-tests.yml).
 
 
-### With `valgrind` (Memory Leak Check)
----
-
-```sh
-python3 checker.py --all --valgrind
-```
-
-
-### Run specific tests
----
-
-```sh
-python3 checker.py --print --valgrind
-python3 checker.py --clear --valgrind
-python3 checker.py --analyse --valgrind
-```
