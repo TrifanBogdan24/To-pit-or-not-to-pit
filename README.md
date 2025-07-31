@@ -1,7 +1,7 @@
 # 🏎️ To pit or not pit...
 
 A **memory management** CLI app, built in **C**
-to analyze the sensors of a Ferrari **Formula 1** car.
+to analyze sensors data of a Ferrari **Formula 1** car.
 
 
 > ⚠️ Spoiler Alert!
@@ -86,6 +86,12 @@ It will delete mulfunctioning sensor (containing error-prone values) from the ar
 Gracefully shut down the program after free-ing the memory.
 
 
+## 👨‍💻 Preview
+
+
+![gif](./preview.gif)
+
+
 ## ▶️ How to run the CLI app
 
 
@@ -105,6 +111,20 @@ Example:
 ```sh
 make clean
 ```
+
+
+## `>_` User Input
+
+- **Command line argument**: path to the `*.dat` file containing sensors data
+  - > Use `sensors_*.dat` from `checker/input/` 
+- **Stdandard input**: the *"operations"* to perform on sensors data
+  - > Use `commands_*.in` from `checker/input/`
+
+💡 A more elegant solution to run the executable
+would be to use **input redirection** (`<`) to provide commands from a file,
+as shown in the examples above.
+
+
 
 
 ## Data Structures for Sensors
