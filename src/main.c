@@ -116,32 +116,36 @@ void status_senzor(sensor senzor)
 	}
 }
 
-int main(int argc, char const *argv[])
+
+void read_sensors_file(char const *file_path,
+	int *num_sensors, sensor **sensors_array)
 {
-	if (argv[UNU] == NULL) {
-		printf("Eroare la deschiderea fisierului.");
-		return UNU;
+	// "rb" -> read binary file
+	FILE *fin = fopen(file_path, "rb");
+
+	if (fin == NULL) {
+		printf("[ERR] Something went wrong when \
+			trying to open the %s file.\n", file_path);
+		exit(EXIT_FAILURE);
 	}
-	FILE * fin = fopen(argv[UNU], "rb");
 
-	int nr_total_senzori ;
-	fread(&nr_total_senzori, sizeof(int), UNU, fin);
-	// printf("%d\n" ,nr);
+	fread(num_sensors, sizeof(int), UNU, fin);
 
-	sensor *senzor = (sensor *) malloc(nr_total_senzori * sizeof(sensor));
-	for (int i = ZERO ; i < nr_total_senzori; i++) {
+	*sensors_array = (sensor *) malloc((*num_sensors) * sizeof(sensor));
+
+	for (int i = ZERO ; i < *num_sensors; i++) {
 		int tip = ZERO;
 		fread(&tip, sizeof(int), UNU, fin);
 		// senzor[ZERO]->senzor_type = tip;
 		if (tip == UNU) {
 			// senzor de tip PMU
 
-			senzor[i].sensor_type = PMU;
+			(*sensors_array)[i].sensor_type = PMU;
 			// printf("%d PMU\n", senzor[i].sensor_type);
-			senzor[i].sensor_data =
+			(*sensors_array)[i].sensor_data =
 				(void *) malloc(sizeof(power_management_unit));
 			power_management_unit *pmu_data =
-				(power_management_unit *)(senzor[i].sensor_data);
+				(power_management_unit *)((*sensors_array)[i].sensor_data);
 			fread(&pmu_data->voltage, sizeof(float), UNU, fin);
 			fread(&pmu_data->current, sizeof(float), UNU, fin);
 			fread(&pmu_data->power_consumption, sizeof(float), UNU, fin);
@@ -157,10 +161,12 @@ int main(int argc, char const *argv[])
 		} else if (tip == ZERO) {
 			// senzor de tip Tire
 
-			senzor[i].sensor_type = TIRE;
+			(*sensors_array)[i].sensor_type = TIRE;
 			// printf("%d TIRE\n", senzor[i].sensor_type);
-			senzor[i].sensor_data = (void *) malloc(sizeof(tire_sensor));
-			tire_sensor *tire_data = (tire_sensor *) senzor[i].sensor_data;
+			(*sensors_array)[i].sensor_data =
+				(void *) malloc(sizeof(tire_sensor));
+			tire_sensor *tire_data =
+				(tire_sensor *) (*sensors_array)[i].sensor_data;
 			fread(&tire_data->pressure, sizeof(float), UNU, fin);
 			fread(&tire_data->temperature, sizeof(float), UNU, fin);
 			fread(&tire_data->wear_level, sizeof(int), UNU, fin);
@@ -173,111 +179,154 @@ int main(int argc, char const *argv[])
 
 		}
 
-		fread(&senzor[i].nr_operations, sizeof(int), UNU, fin);
+		fread(&(*sensors_array)[i].nr_operations, sizeof(int), UNU, fin);
 		// printf("%d\n", senzor[i].nr_operations);
-		senzor[i].operations_idxs =
-			(int *) malloc(senzor[i].nr_operations * sizeof(int));
-		for (int j = ZERO; j < senzor[i].nr_operations; j++) {
-			fread(&senzor[i].operations_idxs[j], sizeof(int), UNU, fin);
+		(*sensors_array)[i].operations_idxs =
+			(int *) malloc((*sensors_array)[i].nr_operations * sizeof(int));
+		for (int j = ZERO; j < (*sensors_array)[i].nr_operations; j++) {
+			fread(&(*sensors_array)[i].operations_idxs[j],
+				sizeof(int), UNU, fin);
 			// printf("%d ", senzor[i].operations_idxs[j]);
 		}
 		// printf("\n");
 	}
 
+	fclose(fin);
+}
 
+
+void priority_sort_sensors(int num_sensors, sensor *sensors_array)
+{
 	// keep it simple ;)
 	sensor *senzor_auxiliar =
-		(sensor *) malloc(nr_total_senzori * sizeof(sensor));
+		(sensor *) malloc(num_sensors* sizeof(sensor));
 	int parcurgere = ZERO;
-	for (int i = ZERO; i < nr_total_senzori; i++) {
-		if (senzor[i].sensor_type == PMU) {
-			senzor_auxiliar[parcurgere++] = senzor[i];
+	for (int i = ZERO; i < num_sensors; i++) {
+		if (sensors_array[i].sensor_type == PMU) {
+			senzor_auxiliar[parcurgere++] = sensors_array[i];
 		}
 	}
-	for (int i = ZERO; i < nr_total_senzori; i++) {
-		if (senzor[i].sensor_type == TIRE) {
-			senzor_auxiliar[parcurgere++] = senzor[i];
+	for (int i = ZERO; i < num_sensors; i++) {
+		if (sensors_array[i].sensor_type == TIRE) {
+			senzor_auxiliar[parcurgere++] = sensors_array[i];
 		}
 	}
-	for (int i = ZERO; i < nr_total_senzori; i++) {
-		senzor[i] = senzor_auxiliar[i];
+	for (int i = ZERO; i < num_sensors; i++) {
+		sensors_array[i] = senzor_auxiliar[i];
 	}
-	// for(int i = ZERO; i <= nr_total_senzori-1; i++) {
+	// for(int i = ZERO; i <= num_sensors-1; i++) {
 	// 	if (senzor[i].sensor_type == PMU) printf("PMU\n");
 	// 	else if (senzor[i].sensor_type == TIRE) printf("TIRE\n");
 	// }
+	free(senzor_auxiliar);
+
+}
+
+
+void command_print(int num_sensors, sensor *sensors_array)
+{
+	int indice_senzor = ZERO;
+	scanf("%d", &indice_senzor);
+	// printf("\n %d \n ", indice_senzor);
+	if (ZERO <= indice_senzor &&
+		indice_senzor <= num_sensors - UNU) {
+		status_senzor(sensors_array[indice_senzor]);
+	} else {
+		printf("Index not in range!\n");
+	}
+}
+
+
+void command_analyze(int num_sensors, sensor *sensors_array)
+{
+
+	int indice_senzor = ZERO;
+	scanf("%d", &indice_senzor);
+	//printf("\n %d \n ", indice_senzor);
+	if (ZERO <= indice_senzor &&
+		indice_senzor <= num_sensors - UNU) {
+		void *functie[OPT];
+		get_operations(functie);
+		for (int i = ZERO; i <
+			sensors_array[indice_senzor].nr_operations; i++) {
+			// apelul functiei :
+			((void (*)()) functie[sensors_array[indice_senzor]
+				.operations_idxs[i]]) (sensors_array[indice_senzor]
+				.sensor_data);
+				// echivalent cu f();
+		}
+	} else {
+		printf("Index not in range!\n");
+	}
+}
+
+
+void command_clear(int *num_sensors, sensor *sensors_array)
+{
+	/*
+	vom muta toti senzorii care contin valori eronate
+		in stanga 'vectorului lui pointeri'
+	vom afla numarul de senzori cu valori malitioase,
+		pe care il notam cu nr_to_be_deleted
+	vom sterge din vectorul de senzori,
+		ultimi nr_to_be_deleted senzori din vectori
+	*/
+	int i = ZERO;
+	while (i < *num_sensors) {
+		// verificam daca au ramas doar senzorii care dau valori corecte
+		if (verify(sensors_array[i]) == ZERO) {
+			// senzorul de pe pozitia i indica eronat
+			// dorim sa stergem, deci, senzorul de pe pozitia i
+			sensor aux = sensors_array[i];
+			for (int j = i; j <  *num_sensors - UNU; j++) {
+				sensors_array[j] = sensors_array[j + UNU];
+			}
+			sensors_array[*num_sensors - 1] = aux;
+			free(sensors_array[*num_sensors - UNU].sensor_data);
+			free(sensors_array[*num_sensors - UNU].operations_idxs);
+			(*num_sensors)--;
+		} else {
+			i++;
+		}
+	}
+}
+
+int main(int argc, char const *argv[])
+{
+	if (argc != 2) {
+		printf("[ERR] Invalid number of arguments.\n");
+		printf("[INFO] The program expects to receive \
+			a single argument in CLI:\n\t \
+			the path to the binary file containing sensors data.");
+		exit(EXIT_FAILURE);
+	}
+
+
+	int num_sensors;
+	sensor *sensors_array;
+	read_sensors_file(argv[UNU], &num_sensors, &sensors_array);
+
+	priority_sort_sensors(num_sensors, sensors_array);
+
 
 	char *command = (char *) malloc(ZECE * sizeof(char));
-	int ok = UNU;
-	while (ok == UNU) {
+	while (1) {
 		scanf("%s", command);
 		if (strstr(command, PRINT) != NULL) {
-			int indice_senzor = ZERO;
-			scanf("%d", &indice_senzor);
-			// printf("\n %d \n ", indice_senzor);
-			if (ZERO <= indice_senzor &&
-				indice_senzor <= nr_total_senzori - UNU) {
-				status_senzor(senzor[indice_senzor]);
-			} else {
-				printf("Index not in range!\n");
-			}
+			command_print(num_sensors, sensors_array);
 		} else if (strstr(command, ANALYSE) != NULL) {
-			int indice_senzor = ZERO;
-			scanf("%d", &indice_senzor);
-			//printf("\n %d \n ", indice_senzor);
-			if (ZERO <= indice_senzor &&
-				indice_senzor <= nr_total_senzori - UNU) {
-				void *functie[OPT];
-				get_operations(functie);
-				for (int i = ZERO; i <
-					senzor[indice_senzor].nr_operations; i++) {
-					// apelul functiei :
-					((void (*)()) functie[senzor[indice_senzor]
-						.operations_idxs[i]]) (senzor[indice_senzor]
-						.sensor_data);
-						// echivalent cu f();
-				}
-			} else {
-				printf("Index not in range!\n");
-			}
-		} else if (strstr(command, EXIT) != NULL) {
-			ok = ZERO;
-			for (int i = ZERO; i < nr_total_senzori; i++) {
-				free(senzor[i].sensor_data);
-				free(senzor[i].operations_idxs);
-			}
-			free(senzor_auxiliar);
-			free(senzor);
+			command_analyze(num_sensors, sensors_array);
 		} else if (strstr(command, CLEAR) != NULL) {
-			/*
-			vom muta toti senzorii care contin valori eronate
-				in stanga 'vectorului lui pointeri'
-			vom afla numarul de senzori cu valori malitioase,
-				pe care il notam cu nr_to_be_deleted
-			vom sterge din vectorul de senzori,
-				ultimi nr_to_be_deleted senzori din vectori
-			*/
-			int i = ZERO;
-			while (i < nr_total_senzori) {
-				// verificam daca au ramas doar senzorii care dau valori corecte
-				if (verify(senzor[i]) == ZERO) {
-					// senzorul de pe pozitia i indica eronat
-					// dorim sa stergem, deci, senzorul de pe pozitia i
-					sensor aux = senzor[i];
-					for (int j = i; j <  nr_total_senzori - UNU; j++) {
-						senzor[j] = senzor[j + UNU];
-					}
-					senzor[nr_total_senzori-1] = aux;
-					free(senzor[nr_total_senzori - UNU].sensor_data);
-					free(senzor[nr_total_senzori - UNU].operations_idxs);
-					nr_total_senzori--;
-				} else {
-					i++;
-				}
+			command_clear(&num_sensors, sensors_array);
+		} else if (strstr(command, EXIT) != NULL) {
+			for (int i = ZERO; i < num_sensors; i++) {
+				free(sensors_array[i].sensor_data);
+				free(sensors_array[i].operations_idxs);
 			}
+			free(sensors_array);
+			break;
 		}
 	}
 	free(command);
-	fclose(fin);
 	return 0;
 }
