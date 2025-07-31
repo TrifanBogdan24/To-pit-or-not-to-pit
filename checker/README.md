@@ -13,7 +13,7 @@ sudo apt update && sudo apt install -y valgrind
 
 ```sh
 cd checker/
-chmod +x ./cs/cs.sh
+chmod +x ./coding-style/cs.sh
 ```
 
 > To run the tests, you must be in `checker/` directory.

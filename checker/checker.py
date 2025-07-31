@@ -45,7 +45,7 @@ execPath = f"{execDir}/{execName}"
 testsDir = "input"
 outputDir = "tmp"
 refDir = "output"
-csChecker = "cs/cs.sh"
+csChecker = "coding-style/cs.sh"
 
 runExec = "./" + execPath
 
