@@ -254,20 +254,32 @@ void command_analyze(int num_sensors, sensor *sensors_array)
 }
 
 
-void command_clear(int *num_sensors, sensor *sensors_array)
+void command_clear(int *num_sensors, sensor **sensors_array)
 {
 	int i = ZERO;
 	while (i < *num_sensors) {
-		if (verify_sensor(sensors_array[i])) {
+		if (verify_sensor((*sensors_array)[i])) {
 			// Sensor i contains erroneous data => delete it from the array
-			sensor aux = sensors_array[i];
+			sensor tmp_sensor = (*sensors_array)[i];
 			for (int j = i; j <  *num_sensors - ONE; j++) {
-				sensors_array[j] = sensors_array[j + ONE];
+				(*sensors_array)[j] = (*sensors_array)[j + ONE];
 			}
-			sensors_array[*num_sensors - 1] = aux;
-			free(sensors_array[*num_sensors - ONE].sensor_data);
-			free(sensors_array[*num_sensors - ONE].operations_idxs);
+			(*sensors_array)[*num_sensors - 1] = tmp_sensor;
+			free((*sensors_array)[*num_sensors - ONE].sensor_data);
+			free((*sensors_array)[*num_sensors - ONE].operations_idxs);
 			(*num_sensors)--;
+
+			// Resize the vector after clear
+			sensor *tmp_array = (sensor *) realloc(
+				sensors_array,
+				(*num_sensors) * sizeof(sensor)
+			);
+
+			if (tmp_array != NULL) {
+				*sensors_array = tmp_array;
+			} else {
+				// [ERR] Unable to resize sensor array
+			}
 		} else {
 			i++;
 		}
@@ -298,7 +310,7 @@ int main(int argc, char const *argv[])
 		} else if (strstr(command, ANALYSE) != NULL) {
 			command_analyze(num_sensors, sensors_array);
 		} else if (strstr(command, CLEAR) != NULL) {
-			command_clear(&num_sensors, sensors_array);
+			command_clear(&num_sensors, &sensors_array);
 		} else if (strstr(command, EXIT) != NULL) {
 			break;
 		}
