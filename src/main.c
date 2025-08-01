@@ -3,14 +3,14 @@
 #include <stdlib.h>
 #include "structs.h"
 #define ZERO 0
-#define UNU 1
-#define DOI 2
+#define ONE 1
+#define TWO 2
 #define TREI 3
-#define OPT 8
-#define ZECE 10
-#define DOUA_ZECI 20
-#define SUTA 100
-#define MIE 1000
+#define EIGHT 8
+#define TEN 10
+#define TWENTY 20
+#define ONE_HUNDRED 100
+#define ONE_THOUSAND 1000
 #define MIN_PRESSURE 19
 #define MAX_PRESURE 28
 #define MAX_TEMP 120
@@ -19,100 +19,103 @@
 #define CLEAR "clear"
 #define EXIT "exit"
 
-
-int verify(sensor senzor)
+/*
+* It will return 0 if sensor values are within optimal range
+* and 1, otherwise.
+*/
+int verify_sensor(sensor senzor)
 {
-	// subprogramul intoarce 1 daca valorile sunt in parametri corecti
-	// subprogramul intoarce 0 daca senzorul indica eronat
 	if (senzor.sensor_type == TIRE) {
 		tire_sensor *tire_data = (tire_sensor *)(senzor.sensor_data);
 		if (tire_data->pressure < MIN_PRESSURE)
-			return ZERO;
+			return EXIT_FAILURE;
 		if (tire_data->pressure > MAX_PRESURE)
-			return ZERO;
+			return EXIT_FAILURE;
 		if (tire_data->temperature < ZERO)
-			return ZERO;
+			return EXIT_FAILURE;
 		if (tire_data->temperature > MAX_TEMP)
-			return ZERO;
+			return EXIT_FAILURE;
 		if (tire_data->wear_level < ZERO)
-			return ZERO;
-		if (tire_data->wear_level > SUTA)
-			return ZERO;
-		return UNU;
+			return EXIT_FAILURE;
+		if (tire_data->wear_level > ONE_HUNDRED)
+			return EXIT_FAILURE;
+		return EXIT_SUCCESS;
 	}
 	if (senzor.sensor_type == PMU) {
 		power_management_unit *pmu_data =
 			(power_management_unit *)(senzor.sensor_data);
-		if (pmu_data->voltage < ZECE)
-			return ZERO;
-		if (pmu_data->voltage > DOUA_ZECI)
-			return ZERO;
-		if (pmu_data->current < -SUTA)
-			return ZERO;
-		if (pmu_data->current > SUTA)
-			return ZERO;
+		if (pmu_data->voltage < TEN)
+			return EXIT_FAILURE;
+		if (pmu_data->voltage > TWENTY)
+			return EXIT_FAILURE;
+		if (pmu_data->current < -ONE_HUNDRED)
+			return EXIT_FAILURE;
+		if (pmu_data->current > ONE_HUNDRED)
+			return EXIT_FAILURE;
 		if (pmu_data->power_consumption < ZERO)
-			return ZERO;
-		if (pmu_data->power_consumption > MIE)
-			return ZERO;
+			return EXIT_FAILURE;
+		if (pmu_data->power_consumption > ONE_THOUSAND)
+			return EXIT_FAILURE;
 		if (pmu_data->energy_regen < ZERO)
-			return ZERO;
-		if (pmu_data->energy_regen > SUTA)
-			return ZERO;
+			return EXIT_FAILURE;
+		if (pmu_data->energy_regen > ONE_HUNDRED)
+			return EXIT_FAILURE;
 		if (pmu_data->energy_storage < ZERO)
-			return ZERO;
-		if (pmu_data->energy_storage > SUTA)
-			return ZERO;
-		return UNU;
+			return EXIT_FAILURE;
+		if (pmu_data->energy_storage > ONE_HUNDRED)
+			return EXIT_FAILURE;
+		return EXIT_SUCCESS;
 	}
-	return UNU;
+	return EXIT_FAILURE;
 }
 
 
-void status_senzor(sensor senzor)
+/* Print format for PMU sensor :
+	Power Management Unit
+	Voltage: <voltage>
+	Current: <current>
+	Power Consumption: <power_consumption>
+	Energy Regen: <energy_regen>
+	Energy Storage: <energy_storage>
+*/
+void print_PMU_sensor_status(power_management_unit *pmu_data)
+{
+	printf("Power Management Unit\n");
+	printf("Voltage: %.2f\n", pmu_data->voltage);
+	printf("Current: %.2f\n", pmu_data->current);
+	printf("Power Consumption: %.2f\n", pmu_data->power_consumption);
+	printf("Energy Regen: %d%%\n", pmu_data->energy_regen);
+	printf("Energy Storage: %d%%\n", pmu_data->energy_storage);
+}
+
+
+/* Print format for TIRE sensor :
+	Tire Sensor
+	Pressure: <pressure>
+	Temperature: <temperature>
+	Wear Level: <wear_level>
+	Performance Score: <computed score>/Performance Score: Not Calculated
+*/
+void print_TYRE_sensor_status(tire_sensor *tire_data)
+{
+	printf("Tire Sensor\n");
+	printf("Pressure: %.2f\n", tire_data->pressure);
+	printf("Temperature: %.2f\n", tire_data->temperature);
+	printf("Wear Level: %d%%\n", tire_data->wear_level);
+	if (tire_data->performace_score) {
+		printf("Performance Score: %d\n", tire_data->performace_score);
+	} else {
+		printf("Performance Score: Not Calculated\n");
+	}
+}
+
+
+void print_status(sensor senzor)
 {
 	if (senzor.sensor_type == PMU) {
-		// senzorul care ni se cere sa il afisam este POWER MANAGEMENT UNIT
-
-		/* Fromat de afisare PMU :
-		Power Management Unit
-		Voltage: <voltage>
-		Current: <current>
-		Power Consumption: <power_consumption>
-		Energy Regen: <energy_regen>
-		Energy Storage: <energy_storage>
-		*/
-		power_management_unit *pmu_data =
-			(power_management_unit *)(senzor.sensor_data);
-		printf("Power Management Unit\n");
-		printf("Voltage: %.2f\n", pmu_data->voltage);
-		printf("Current: %.2f\n", pmu_data->current);
-		printf("Power Consumption: %.2f\n", pmu_data->power_consumption);
-		printf("Energy Regen: %d%%\n", pmu_data->energy_regen);
-		printf("Energy Storage: %d%%\n", pmu_data->energy_storage);
-		return;
+		print_PMU_sensor_status((power_management_unit *)(senzor.sensor_data));
 	} else if (senzor.sensor_type == TIRE) {
-		// senzorul care ni se cere sa il afisam este TIRE
-
-		/* Format de afisare TIRE :
-		Tire Sensor
-		Pressure: <pressure>
-		Temperature: <temperature>
-		Wear Level: <wear_level>
-		Performance Score: <computed score>/Performance Score: Not Calculated
-		*/
-
-		tire_sensor *tire_data = (tire_sensor *)(senzor.sensor_data);
-		printf("Tire Sensor\n");
-		printf("Pressure: %.2f\n", tire_data->pressure);
-		printf("Temperature: %.2f\n", tire_data->temperature);
-		printf("Wear Level: %d%%\n", tire_data->wear_level);
-		// printf("Performance Score: %d\n", tire_data->performace_score);
-		if (tire_data->performace_score == ZERO)
-			printf("Performance Score: Not Calculated\n");
-		else
-			printf("Performance Score: %d\n",
-				tire_data->performace_score);
+		print_TYRE_sensor_status((tire_sensor *)(senzor.sensor_data));
 	}
 }
 
@@ -129,108 +132,101 @@ void read_sensors_file(char const *file_path,
 		exit(EXIT_FAILURE);
 	}
 
-	fread(num_sensors, sizeof(int), UNU, fin);
+	fread(num_sensors, sizeof(int), ONE, fin);
 
 	*sensors_array = (sensor *) malloc((*num_sensors) * sizeof(sensor));
 
 	for (int i = ZERO ; i < *num_sensors; i++) {
 		int tip = ZERO;
-		fread(&tip, sizeof(int), UNU, fin);
-		// senzor[ZERO]->senzor_type = tip;
-		if (tip == UNU) {
-			// senzor de tip PMU
-
+		fread(&tip, sizeof(int), ONE, fin);
+		if (tip == ONE) {
+			// Read PMU sensor data from file
 			(*sensors_array)[i].sensor_type = PMU;
-			// printf("%d PMU\n", senzor[i].sensor_type);
 			(*sensors_array)[i].sensor_data =
 				(void *) malloc(sizeof(power_management_unit));
 			power_management_unit *pmu_data =
 				(power_management_unit *)((*sensors_array)[i].sensor_data);
-			fread(&pmu_data->voltage, sizeof(float), UNU, fin);
-			fread(&pmu_data->current, sizeof(float), UNU, fin);
-			fread(&pmu_data->power_consumption, sizeof(float), UNU, fin);
-			fread(&pmu_data->energy_regen, sizeof(int), UNU, fin);
-			fread(&pmu_data->energy_storage, sizeof(int), UNU, fin);
-
-			// printf("%.2f %.2f %.2f %d %d\n",
-			// pmu_data->voltage, pmu_data->current,
-			// pmu_data->power_consumption,
-			// pmu_data->energy_regen,
-			// pmu_data->energy_storage);
-
+			fread(&pmu_data->voltage, sizeof(float), ONE, fin);
+			fread(&pmu_data->current, sizeof(float), ONE, fin);
+			fread(&pmu_data->power_consumption, sizeof(float), ONE, fin);
+			fread(&pmu_data->energy_regen, sizeof(int), ONE, fin);
+			fread(&pmu_data->energy_storage, sizeof(int), ONE, fin);
 		} else if (tip == ZERO) {
-			// senzor de tip Tire
-
+			// Read TYRE sensor data from file
 			(*sensors_array)[i].sensor_type = TIRE;
-			// printf("%d TIRE\n", senzor[i].sensor_type);
 			(*sensors_array)[i].sensor_data =
 				(void *) malloc(sizeof(tire_sensor));
 			tire_sensor *tire_data =
 				(tire_sensor *) (*sensors_array)[i].sensor_data;
-			fread(&tire_data->pressure, sizeof(float), UNU, fin);
-			fread(&tire_data->temperature, sizeof(float), UNU, fin);
-			fread(&tire_data->wear_level, sizeof(int), UNU, fin);
-			fread(&tire_data->performace_score, sizeof(int), UNU, fin);
-			// printf("%.2f %.2f %d %d\n",
-			// tire_data->pressure,
-			// tire_data->temperature,
-			// tire_data->wear_level,
-			// tire_data->performace_score);
-
+			fread(&tire_data->pressure, sizeof(float), ONE, fin);
+			fread(&tire_data->temperature, sizeof(float), ONE, fin);
+			fread(&tire_data->wear_level, sizeof(int), ONE, fin);
+			fread(&tire_data->performace_score, sizeof(int), ONE, fin);
 		}
 
-		fread(&(*sensors_array)[i].nr_operations, sizeof(int), UNU, fin);
-		// printf("%d\n", senzor[i].nr_operations);
+		fread(&(*sensors_array)[i].nr_operations, sizeof(int), ONE, fin);
 		(*sensors_array)[i].operations_idxs =
 			(int *) malloc((*sensors_array)[i].nr_operations * sizeof(int));
 		for (int j = ZERO; j < (*sensors_array)[i].nr_operations; j++) {
 			fread(&(*sensors_array)[i].operations_idxs[j],
-				sizeof(int), UNU, fin);
-			// printf("%d ", senzor[i].operations_idxs[j]);
+				sizeof(int), ONE, fin);
 		}
-		// printf("\n");
 	}
 
 	fclose(fin);
 }
 
+/*
+* Helper operationstion that I advice to be called after sorting the array
+*/
+void print_all_sensor_types(int num_sensors, sensor *sensors_array)
+{
+	for (int i = ZERO; i <= num_sensors - 1; i++) {
+		if (sensors_array[i].sensor_type == PMU) {
+			printf("PMU\n");
+		} else if (sensors_array[i].sensor_type == TIRE) {
+			printf("TIRE\n");
+		}
+	}
+}
 
+
+/*
+* Sort the sensors array by iterating it twice:
+* 1. first time we get the PMU sensors in the order in which they appear
+* 2. second time we get the TYRE sensors
+*/
 void priority_sort_sensors(int num_sensors, sensor *sensors_array)
 {
 	// keep it simple ;)
-	sensor *senzor_auxiliar =
+	sensor *tmp_array =
 		(sensor *) malloc(num_sensors* sizeof(sensor));
-	int parcurgere = ZERO;
+	int idx = ZERO;
 	for (int i = ZERO; i < num_sensors; i++) {
 		if (sensors_array[i].sensor_type == PMU) {
-			senzor_auxiliar[parcurgere++] = sensors_array[i];
+			tmp_array[idx++] = sensors_array[i];
 		}
 	}
 	for (int i = ZERO; i < num_sensors; i++) {
 		if (sensors_array[i].sensor_type == TIRE) {
-			senzor_auxiliar[parcurgere++] = sensors_array[i];
+			tmp_array[idx++] = sensors_array[i];
 		}
 	}
 	for (int i = ZERO; i < num_sensors; i++) {
-		sensors_array[i] = senzor_auxiliar[i];
+		sensors_array[i] = tmp_array[i];
 	}
-	// for(int i = ZERO; i <= num_sensors-1; i++) {
-	// 	if (senzor[i].sensor_type == PMU) printf("PMU\n");
-	// 	else if (senzor[i].sensor_type == TIRE) printf("TIRE\n");
-	// }
-	free(senzor_auxiliar);
+
+	free(tmp_array);
 
 }
 
 
 void command_print(int num_sensors, sensor *sensors_array)
 {
-	int indice_senzor = ZERO;
-	scanf("%d", &indice_senzor);
-	// printf("\n %d \n ", indice_senzor);
-	if (ZERO <= indice_senzor &&
-		indice_senzor <= num_sensors - UNU) {
-		status_senzor(sensors_array[indice_senzor]);
+	int idx = ZERO;     // sensor index
+	scanf("%d", &idx);
+	if (ZERO <= idx && idx <= num_sensors - ONE) {
+		print_status(sensors_array[idx]);
 	} else {
 		printf("Index not in range!\n");
 	}
@@ -240,20 +236,18 @@ void command_print(int num_sensors, sensor *sensors_array)
 void command_analyze(int num_sensors, sensor *sensors_array)
 {
 
-	int indice_senzor = ZERO;
-	scanf("%d", &indice_senzor);
-	//printf("\n %d \n ", indice_senzor);
-	if (ZERO <= indice_senzor &&
-		indice_senzor <= num_sensors - UNU) {
-		void *functie[OPT];
-		get_operations(functie);
+	int idx = ZERO;     // sensor index
+	scanf("%d", &idx);
+	if (ZERO <= idx && idx <= num_sensors - ONE) {
+		void *operations[EIGHT];
+		get_operations(operations);
 		for (int i = ZERO; i <
-			sensors_array[indice_senzor].nr_operations; i++) {
-			// apelul functiei :
-			((void (*)()) functie[sensors_array[indice_senzor]
-				.operations_idxs[i]]) (sensors_array[indice_senzor]
+			sensors_array[idx].nr_operations; i++) {
+			// operationstion call :
+			((void (*)()) operations[sensors_array[idx]
+				.operations_idxs[i]]) (sensors_array[idx]
 				.sensor_data);
-				// echivalent cu f();
+				// equivalent to f();
 		}
 	} else {
 		printf("Index not in range!\n");
@@ -274,16 +268,16 @@ void command_clear(int *num_sensors, sensor *sensors_array)
 	int i = ZERO;
 	while (i < *num_sensors) {
 		// verificam daca au ramas doar senzorii care dau valori corecte
-		if (verify(sensors_array[i]) == ZERO) {
+		if (verify_sensor(sensors_array[i])) {
 			// senzorul de pe pozitia i indica eronat
 			// dorim sa stergem, deci, senzorul de pe pozitia i
 			sensor aux = sensors_array[i];
-			for (int j = i; j <  *num_sensors - UNU; j++) {
-				sensors_array[j] = sensors_array[j + UNU];
+			for (int j = i; j <  *num_sensors - ONE; j++) {
+				sensors_array[j] = sensors_array[j + ONE];
 			}
 			sensors_array[*num_sensors - 1] = aux;
-			free(sensors_array[*num_sensors - UNU].sensor_data);
-			free(sensors_array[*num_sensors - UNU].operations_idxs);
+			free(sensors_array[*num_sensors - ONE].sensor_data);
+			free(sensors_array[*num_sensors - ONE].operations_idxs);
 			(*num_sensors)--;
 		} else {
 			i++;
@@ -304,12 +298,12 @@ int main(int argc, char const *argv[])
 
 	int num_sensors;
 	sensor *sensors_array;
-	read_sensors_file(argv[UNU], &num_sensors, &sensors_array);
+	read_sensors_file(argv[ONE], &num_sensors, &sensors_array);
 
 	priority_sort_sensors(num_sensors, sensors_array);
 
 
-	char *command = (char *) malloc(ZECE * sizeof(char));
+	char *command = (char *) malloc(TEN * sizeof(char));
 	while (1) {
 		scanf("%s", command);
 		if (strstr(command, PRINT) != NULL) {
@@ -319,14 +313,16 @@ int main(int argc, char const *argv[])
 		} else if (strstr(command, CLEAR) != NULL) {
 			command_clear(&num_sensors, sensors_array);
 		} else if (strstr(command, EXIT) != NULL) {
-			for (int i = ZERO; i < num_sensors; i++) {
-				free(sensors_array[i].sensor_data);
-				free(sensors_array[i].operations_idxs);
-			}
-			free(sensors_array);
 			break;
 		}
 	}
+
+	for (int i = ZERO; i < num_sensors; i++) {
+		free(sensors_array[i].sensor_data);
+		free(sensors_array[i].operations_idxs);
+	}
+	free(sensors_array);
 	free(command);
+
 	return 0;
 }
