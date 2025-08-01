@@ -7,6 +7,8 @@ to analyze sensors data of a Ferrari **Formula 1** car.
 > ⚠️ Spoiler Alert!
 > This is **NOT** a **data acquisition** project.
 
+> Sensors values have already been 'collected' and stored in `*.dat` **binary files**.
+
 ## Story Telling
 
 In this **fictional scenario in which my project takes place**,
@@ -206,10 +208,13 @@ Thus, sorting has a time complexity of `O(2 * N) = O(N)`
 where **N** is the total number of sensors.
 
 
-> 💡 Another (*perhaps more efficient method*) would have been a **priority queue**,
-> implemented as a *"binary tree"*:
-> 1. **PMU** sensors to be in the left branch
-> 2. while the **Tire** values in the right
+> 💡 Another (*perhaps more efficient method*) would have been 
+> to build two **linked lists** as we read the sensors:
+> 1. 🔗 one for **PMU** sensors
+> 2. 🔗 another one for **Tire** values
+>
+> Concattenating the lists would result in an array, sorted by sensor type.
+
 
 > 🎯 Even though more complex methods may exist,
 > the one that I choose aligns better with the goals and context of my implementation.
@@ -233,16 +238,18 @@ The call is made using the `sensor_data` field of the `sensor` data structure.
 
 
 ```c
-scanf("%d", &indice_senzor);
-if (ZERO <= indice_senzor && indice_senzor <= nr_total_senzori - UNU) {
-    void *functie[OPT];
-    get_operations(functie);
-    for (int i = ZERO; i < senzor[indice_senzor].nr_operations; i++) {
-        // function call (equivalent to f() ) :
-        ((void (*)()) functie[senzor[indice_senzor]
-            .operations_idxs[i]]) (senzor[indice_senzor]
-            .sensor_data);
-    }
+int idx = 0;     // sensor index
+scanf("%d", &idx);
+if (0 <= idx && idx <= num_sensors - 1) {
+  void *operations[NUM_OPERATIONS];
+  get_operations(operations);
+  for (int i = 0; i < sensors_array[idx].nr_operations; i++) {
+    // operations call :
+    ((void (*)()) operations[sensors_array[idx]
+      .operations_idxs[i]]) (sensors_array[idx]
+      .sensor_data);
+      // equivalent to f();
+  }
 }
 ```
 
