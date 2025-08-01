@@ -74,12 +74,12 @@ It will show data from all sensors, sorting after their type:
 
 It will call the functions associated to the given sensor.
 
-Like **imple print**, the `Index not in range!` will appear if the index is invalid.
+Like **simple print**, the `Index not in range!` will appear if the index is invalid.
 
 ### 4. `clear`
 ---
 
-It will delete mulfunctioning sensor (containing error-prone values) from the array of sensors.
+It will delete mulfunctioning sensors (containing error-prone values) from the array of sensors.
 
 
 ### 5. `exit`
