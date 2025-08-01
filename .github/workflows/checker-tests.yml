@@ -39,7 +39,7 @@ jobs:
 
       - name: Run memory check with Valgrind
         working-directory: ./checker
-        run: python3 checker.py --all --valgrind 2>&1 | tee valgrind_output.txt
+        run: python3 checker.py --all --valgrind --output 2>&1 | tee valgrind_output.txt
       
       - name: Coding Style checker
         run: |
@@ -55,7 +55,7 @@ jobs:
             checker/test_output.txt
             checker/valgrind_output.txt
             checker/coding_style.txt
-            checker/tmp/
+            checker/output/
             checker/valgrind_logs/
           retention-days: 30
 

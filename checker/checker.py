@@ -43,8 +43,8 @@ execName = "main"
 execDir = "../src"
 execPath = f"{execDir}/{execName}"
 testsDir = "input"
-outputDir = "tmp"
-refDir = "output"
+outputDir = "output"
+refDir = "ref"
 csChecker = "coding-style/cs.sh"
 
 runExec = "./" + execPath
@@ -107,6 +107,17 @@ def test_suite(type, typeScore, typeNo):
 print("\n" + header)
 #============================== INIT TEST ==============================#
 print("\n======================== INIT TEST =========================\n")
+
+
+if not os.path.isdir(outputDir):
+    print(f"Creating directory to redirect stdout: {outputDir}")
+    os.mkdir(outputDir)
+
+if not os.path.isdir(memLogDir):
+    print(f"Creating directory to write valgrind logs: {memLogDir}")
+    os.mkdir(memLogDir)
+
+
 
 rc = subprocess.call(f"make -C {execDir}", shell=useShell)
 if rc != 0:

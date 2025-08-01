@@ -250,7 +250,7 @@ if (ZERO <= indice_senzor && indice_senzor <= nr_total_senzori - UNU) {
 
 
 
-## ✅  Automated Tests
+## ✅🔁 Automated Tests
 
 Curious how everything gets tested automatically?
 

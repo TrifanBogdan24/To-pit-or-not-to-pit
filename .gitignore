@@ -1,4 +1,6 @@
 *.o
 .vscode/
 checker/tmp/*
+checker/output/*
 checker/valgrind_logs/*
+src/main
