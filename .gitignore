@@ -1,2 +1,4 @@
-.vscode/
 *.o
+.vscode/
+checker/tmp/*
+checker/valgrind_logs/*
