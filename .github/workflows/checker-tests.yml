@@ -55,5 +55,7 @@ jobs:
             checker/test_output.txt
             checker/valgrind_output.txt
             checker/coding_style.txt
+            checker/tmp/
+            checker/valgrind_logs/
           retention-days: 30
 
