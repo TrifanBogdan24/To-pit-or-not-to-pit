@@ -8,6 +8,18 @@ on:
     branches:
       - main
 
+  schedule:
+    # Overnight: run tests every day at 03:00 UTC 
+    - cron: "0 3 * * *"
+
+
+concurrency:
+  # cancels the previous in-flight run in this group
+  group: testing-${{ github.ref }}
+  cancel-in-progress: true
+
+
+
 jobs:
   test:
     runs-on: ubuntu-latest

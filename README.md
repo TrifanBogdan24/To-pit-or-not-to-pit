@@ -250,14 +250,15 @@ if (ZERO <= indice_senzor && indice_senzor <= nr_total_senzori - UNU) {
 
 
 
-## 🧪 Automated Tests
+## ✅  Automated Tests
 
 Curious how everything gets tested automatically?
 
 Take a look at the [checker/](./checker/) folder.
 
 
-## ✅ GitHub Actions | CI Pipeline
+### 🧪 GitHub Actions | CI Pipeline
+---
 
 No test suite is complete without **Continous Integration**.
 
@@ -268,3 +269,21 @@ Take a look at the CI workflow here:
 [.github/workflows/checker-tests.yml](.github/workflows/checker-tests.yml).
 
 
+### 🌃 Overnight Testing
+---
+
+Tests not only **run at every commit/pull request**,
+but furthermore, I've configured the workflow
+to automatically run an **overnight build** in GitHub Actions.
+
+```yml
+on:
+  schedule:
+    # Overnight: run tests every day at 03:00 UTC 
+    - cron: "0 3 * * *"
+```
+
+Let's break the `cron` field down:
+```yml
+cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
+```
