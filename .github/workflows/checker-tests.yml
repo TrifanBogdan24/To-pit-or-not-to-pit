@@ -33,13 +33,9 @@ jobs:
           sudo apt update
           sudo apt install -y python3 valgrind
 
-      - name: Run implementation correctness tests
+      - name: Run implementation correctness tests & memory check with Valgrind
         working-directory: ./checker
-        run: python3 checker.py --all 2>&1 | tee test_output.txt
-
-      - name: Run memory check with Valgrind
-        working-directory: ./checker
-        run: python3 checker.py --all --valgrind --output 2>&1 | tee valgrind_output.txt
+        run: python3 checker.py --all --valgrind --output 2>&1 | tee test_results.txt
       
       - name: Coding Style checker
         run: |
@@ -52,8 +48,7 @@ jobs:
         with:
           name: checker-logs
           path: |
-            checker/test_output.txt
-            checker/valgrind_output.txt
+            checker/test_results.txt
             checker/coding_style.txt
             checker/output/
             checker/valgrind_logs/
