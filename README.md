@@ -116,9 +116,9 @@ make clean
 ## `>_` User Input
 
 - **Command line argument**: path to the `*.dat` file containing sensors data
-  - > Use `sensors_*.dat` from `checker/input/` 
+  - > Use `sensors_*.dat` from [`checker/input/`](./checker/input/)
 - **Stdandard input**: the *"operations"* to perform on sensors data
-  - > Use `commands_*.in` from `checker/input/`
+  - > Use `commands_*.in` from [`checker/input/`](./checker/input/)
 
 💡 A more elegant solution to run the executable
 would be to use **input redirection** (`<`) to provide commands from a file,
