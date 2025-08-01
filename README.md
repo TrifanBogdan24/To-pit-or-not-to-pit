@@ -142,7 +142,7 @@ typedef struct {
 ```
 
 
-PMU Sensor:
+**PMU** sensor data:
 ```c
 typedef struct __attribute__((__packed__)) {
 	float voltage;
@@ -154,7 +154,7 @@ typedef struct __attribute__((__packed__)) {
 ```
 
 
-Tire Sensor:
+**Tire** sensor data:
 ```c
 typedef struct __attribute__((__packed__)) {
 	float pressure;

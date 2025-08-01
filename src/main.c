@@ -96,7 +96,7 @@ void print_PMU_sensor_status(power_management_unit *pmu_data)
 	Wear Level: <wear_level>
 	Performance Score: <computed score>/Performance Score: Not Calculated
 */
-void print_TYRE_sensor_status(tire_sensor *tire_data)
+void print_TIRE_sensor_status(tire_sensor *tire_data)
 {
 	printf("Tire Sensor\n");
 	printf("Pressure: %.2f\n", tire_data->pressure);
@@ -115,7 +115,7 @@ void print_status(sensor senzor)
 	if (senzor.sensor_type == PMU) {
 		print_PMU_sensor_status((power_management_unit *)(senzor.sensor_data));
 	} else if (senzor.sensor_type == TIRE) {
-		print_TYRE_sensor_status((tire_sensor *)(senzor.sensor_data));
+		print_TIRE_sensor_status((tire_sensor *)(senzor.sensor_data));
 	}
 }
 
@@ -152,7 +152,7 @@ void read_sensors_file(char const *file_path,
 			fread(&pmu_data->energy_regen, sizeof(int), ONE, fin);
 			fread(&pmu_data->energy_storage, sizeof(int), ONE, fin);
 		} else if (tip == ZERO) {
-			// Read TYRE sensor data from file
+			// Read TIRE sensor data from file
 			(*sensors_array)[i].sensor_type = TIRE;
 			(*sensors_array)[i].sensor_data =
 				(void *) malloc(sizeof(tire_sensor));
@@ -191,14 +191,14 @@ void print_all_sensor_types(int num_sensors, sensor *sensors_array)
 }
 
 
-/*
+/* keep it simple ;)
+*
 * Sort the sensors array by iterating it twice:
 * 1. first time we get the PMU sensors in the order in which they appear
-* 2. second time we get the TYRE sensors
+* 2. second time we get the TIRE sensors
 */
 void priority_sort_sensors(int num_sensors, sensor *sensors_array)
 {
-	// keep it simple ;)
 	sensor *tmp_array =
 		(sensor *) malloc(num_sensors* sizeof(sensor));
 	int idx = ZERO;
@@ -217,7 +217,6 @@ void priority_sort_sensors(int num_sensors, sensor *sensors_array)
 	}
 
 	free(tmp_array);
-
 }
 
 
@@ -257,20 +256,10 @@ void command_analyze(int num_sensors, sensor *sensors_array)
 
 void command_clear(int *num_sensors, sensor *sensors_array)
 {
-	/*
-	vom muta toti senzorii care contin valori eronate
-		in stanga 'vectorului lui pointeri'
-	vom afla numarul de senzori cu valori malitioase,
-		pe care il notam cu nr_to_be_deleted
-	vom sterge din vectorul de senzori,
-		ultimi nr_to_be_deleted senzori din vectori
-	*/
 	int i = ZERO;
 	while (i < *num_sensors) {
-		// verificam daca au ramas doar senzorii care dau valori corecte
 		if (verify_sensor(sensors_array[i])) {
-			// senzorul de pe pozitia i indica eronat
-			// dorim sa stergem, deci, senzorul de pe pozitia i
+			// Sensor i contains erroneous data => delete it from the array
 			sensor aux = sensors_array[i];
 			for (int j = i; j <  *num_sensors - ONE; j++) {
 				sensors_array[j] = sensors_array[j + ONE];
@@ -295,13 +284,11 @@ int main(int argc, char const *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-
 	int num_sensors;
 	sensor *sensors_array;
 	read_sensors_file(argv[ONE], &num_sensors, &sensors_array);
 
 	priority_sort_sensors(num_sensors, sensors_array);
-
 
 	char *command = (char *) malloc(TEN * sizeof(char));
 	while (1) {
