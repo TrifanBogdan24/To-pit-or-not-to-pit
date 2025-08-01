@@ -271,7 +271,7 @@ void command_clear(int *num_sensors, sensor **sensors_array)
 
 			// Resize the vector after clear
 			sensor *tmp_array = (sensor *) realloc(
-				sensors_array,
+				*sensors_array,
 				(*num_sensors) * sizeof(sensor)
 			);
 
