@@ -9,9 +9,9 @@ on:
       - method-1
 
   schedule:
-    # Overnight: run tests every day at 03:00 UTC 
+    # Overnight: run tests every day at 23:00 UTC
     # Usage: cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
-    - cron: "0 3 * * *"
+    - cron: "0 23 * * *"
 
 
 concurrency:
@@ -53,5 +53,5 @@ jobs:
             checker/coding_style.txt
             checker/output/
             checker/valgrind_logs/
-          retention-days: 30
+          retention-days: 5
 
