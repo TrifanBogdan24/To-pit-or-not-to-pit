@@ -305,8 +305,8 @@ to automatically run an **overnight build** in GitHub Actions.
 ```yml
 on:
   schedule:
-    # Overnight: run tests every day at 03:15 UTC 
-    - cron: "15 3 * * *"
+    # Overnight: run tests every day at 03:00 UTC 
+    - cron: "0 3 * * *"
 ```
 
 Let's break down the `cron` field:
