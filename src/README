@@ -11,7 +11,7 @@ SORTARE
     Practic, am grupat senzorii in doua liste simplu inlantuite.
     Iar la final le-am concatenat intr-un vector si am eliberat memoria pentru liste.
     
-    Aceasta structura de data mi-a fost utila sa pastrez ordinea originala in care senzorii apar in fisier.
+    Aceasta structura de date mi-a fost utila sa pastrez ordinea originala in care senzorii apar in fisier.
 
 ANALYZE (APEL DE FUNCTII)
     Pentru a apela functiile, creem un pointer de opt elemente, care vor indica catre toate functiile. Pentru apelul efectiv al functiei, va trebui sa facem casting la pointer pentru a extrage functia dorita. Apelul se face folosind campul senso_data al structului pentru senzori.

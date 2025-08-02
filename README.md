@@ -204,8 +204,8 @@ To store sensors and group them by type, I used **two linked lists**
 
 ```c
 typedef struct node {
-	sensor sensor;
-	struct node *next;
+  sensor sensor;
+  struct node *next;
 } ListNode;
 ```
 
