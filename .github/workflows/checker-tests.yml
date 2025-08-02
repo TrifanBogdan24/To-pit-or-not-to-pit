@@ -1,4 +1,4 @@
-name: Run Checker Tests
+name: Run Checker Tests on Method-2
 
 on:
   push:
@@ -9,7 +9,8 @@ on:
       - method-2
 
   schedule:
-    # Overnight: run tests every day at 03:15 UTC 
+    # Overnight: run tests every day at 03:15 UTC
+    # Usage: cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
     - cron: "15 3 * * *"
 
 

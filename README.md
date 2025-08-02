@@ -292,7 +292,7 @@ on:
     - cron: "15 3 * * *"
 ```
 
-Let's break the `cron` field down:
+Let's break down the `cron` field:
 ```yml
 cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
 ```
