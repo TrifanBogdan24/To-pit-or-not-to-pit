@@ -175,16 +175,15 @@ typedef struct __attribute__((__packed__)) {
 ---
 
 
-The values of **Power Management Unit** sensors
-are more important than those received from **Tyre Sensors**.
-Thus, the Ferrari team will want the **PMU** values to be the first in the sensor vector.
+Ferrari’s telemetry prioritizes **PMU** readings over **Tire** readings.
+The output array must have **all PMU sensors first**, followed by all Tire sensors.
 
-We receive the following sensors as input:
+If we receive the following input (read order):
 ```
 Tire_1 Tire_2 PMU_1 PMU_2 Tire_3 PMU_3 Tire_4 Tire_5 PMU_4
 ```
 
-The vector will contain the sensors in the following order:
+The vector will contain the sensors in the following order (sorted by priority):
 ```
 PMU_1 PMU_2 PMU_3 PMU_4 Tire_1 Tire_2 Tire_3 Tire_4 Tire_5
 ```
