@@ -189,35 +189,37 @@ The vector will contain the sensors in the following order:
 PMU_1 PMU_2 PMU_3 PMU_4 Tire_1 Tire_2 Tire_3 Tire_4 Tire_5
 ```
 
-### Sorting Sensors
+### 🔗 Sorting Sensors using **Linked Lists**
 ---
 
 
-When sorting sensors from pointers,
-I took into account the fact that order (in which sensors of the same type appear) must be kept.
+<!-- TODO: explain it -->
 
-A sorting method, which I considered to be more appropriate to me and easy to implement,
-consists of taking an auxiliary pointer of sensors,
-initially empty and **iterating** the sensors (from left to right) **twice**:
-1. During the first iteration: I added only the **PMU** sensors to the auxiliary pointer
-2. In the second: only those who measure **Tire** parameters/
-
-At the end, I replaced (each element of) the initial pointer(s) with the auxiliary one.
-
-Thus, sorting has a time complexity of `O(2 * N) = O(N)`
-where **N** is the total number of sensors.
+The array of sensors is already sorted by priority during the read from binary file.
 
 
-> 💡 Another (*perhaps more efficient method*) would have been 
-> to build two **linked lists** as we read the sensors:
-> 1. 🔗 one for **PMU** sensors
-> 2. 🔗 another one for **Tire** values
->
-> Concattenating the lists would result in an array, sorted by sensor type.
+
+```c
+typedef struct node {
+	sensor sensor;
+	struct node *next;
+} ListNode;
+```
 
 
-> 🎯 Even though more complex methods may exist,
-> the one that I choose aligns better with the goals and context of my implementation.
+
+```c
+// Read PMU sensor data from file
+sensor sensor = fread_PMU_sensor_values(fin);
+
+if (!pmu_sensors_head) {
+  pmu_sensors_head = pmu_sensors_tail = new_list_node(sensor);
+} else {
+  pmu_sensors_tail->next = new_list_node(sensor);
+  pmu_sensors_tail = pmu_sensors_tail->next;
+}
+```
+
 
 
 ### Analyze Sensors (Function call)
@@ -286,8 +288,8 @@ to automatically run an **overnight build** in GitHub Actions.
 ```yml
 on:
   schedule:
-    # Overnight: run tests every day at 03:00 UTC 
-    - cron: "0 3 * * *"
+    # Overnight: run tests every day at 03:15 UTC 
+    - cron: "15 3 * * *"
 ```
 
 Let's break the `cron` field down:

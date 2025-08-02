@@ -3,14 +3,14 @@ name: Run Checker Tests
 on:
   push:
     branches:
-      - main
+      - method-2
   pull_request:
     branches:
-      - main
+      - method-2
 
   schedule:
-    # Overnight: run tests every day at 03:00 UTC 
-    - cron: "0 3 * * *"
+    # Overnight: run tests every day at 03:15 UTC 
+    - cron: "15 3 * * *"
 
 
 concurrency:

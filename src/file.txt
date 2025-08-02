@@ -1,0 +1,6 @@
+gcc -o main main.o operations.o 
+/usr/bin/ld: main.o: in function `read_sensors_file':
+/home/bogdan/Documents/Facultate/To-pit-or-not-to-pit/src/main.c:173: undefined reference to `fread_sensor_operations'
+/usr/bin/ld: /home/bogdan/Documents/Facultate/To-pit-or-not-to-pit/src/main.c:190: undefined reference to `fread_sensor_operations'
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:10: main] Error 1

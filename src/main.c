@@ -22,6 +22,15 @@
 #define CLEAR   "clear"
 #define EXIT    "exit"
 
+
+ListNode *new_list_node(sensor sensor)
+{
+	ListNode *node = (ListNode *) malloc(sizeof(ListNode));
+	node->sensor = sensor;
+	node->next = NULL;
+	return node;
+}
+
 /*
 * It will return 0 if sensor values are within optimal range
 * and -1, otherwise.
@@ -123,7 +132,57 @@ void print_status(sensor senzor)
 }
 
 
-void read_sensors_file(char const *file_path,
+
+void fread_sensor_operations(FILE *fin, sensor *sensor)
+{
+
+	fread(&sensor->nr_operations, sizeof(int), 1, fin);
+	sensor->operations_idxs =
+		(int *) malloc(sensor->nr_operations * sizeof(int));
+	for (int j = 0; j < sensor->nr_operations; j++) {
+		fread(&sensor->operations_idxs[j],
+			sizeof(int), 1, fin);
+	}
+}
+
+sensor fread_PMU_sensor_values(FILE *fin)
+{
+	sensor sensor;
+
+	sensor.sensor_type = PMU;
+	sensor.sensor_data =
+		(void *) malloc(sizeof(power_management_unit));
+	power_management_unit *pmu_data =
+		(power_management_unit *)(sensor.sensor_data);
+	fread(&pmu_data->voltage, sizeof(float), 1, fin);
+	fread(&pmu_data->current, sizeof(float), 1, fin);
+	fread(&pmu_data->power_consumption, sizeof(float), 1, fin);
+	fread(&pmu_data->energy_regen, sizeof(int), 1, fin);
+	fread(&pmu_data->energy_storage, sizeof(int), 1, fin);
+
+	fread_sensor_operations(fin, &sensor);
+	return sensor;
+}
+
+
+sensor fread_tire_sensor_values(FILE *fin)
+{
+	sensor sensor;
+	sensor.sensor_type = TIRE;
+	sensor.sensor_data =
+		(void *) malloc(sizeof(tire_sensor));
+	tire_sensor *tire_data =
+		(tire_sensor *) sensor.sensor_data;
+	fread(&tire_data->pressure, sizeof(float), 1, fin);
+	fread(&tire_data->temperature, sizeof(float), 1, fin);
+	fread(&tire_data->wear_level, sizeof(int), 1, fin);
+	fread(&tire_data->performace_score, sizeof(int), 1, fin);
+
+	fread_sensor_operations(fin, &sensor);
+	return sensor;
+}
+
+void fread_sensors_array(char const *file_path,
 	int *num_sensors, sensor **sensors_array)
 {
 	// "rb" -> read binary file
@@ -135,8 +194,15 @@ void read_sensors_file(char const *file_path,
 		exit(EXIT_FAILURE);
 	}
 
-	fread(num_sensors, sizeof(int), 1, fin);
+	// pointers to the beginning of the lists:
+	ListNode *pmu_sensors_head  = NULL;
+	ListNode *tire_sensors_head = NULL;
 
+	// pointers to the end of the lists:
+	ListNode *pmu_sensors_tail = NULL;
+	ListNode *tire_sensors_tail = NULL;
+
+	fread(num_sensors, sizeof(int), 1, fin);
 	*sensors_array = (sensor *) malloc((*num_sensors) * sizeof(sensor));
 
 	for (int i = 0 ; i < *num_sensors; i++) {
@@ -144,36 +210,43 @@ void read_sensors_file(char const *file_path,
 		fread(&tip, sizeof(int), 1, fin);
 		if (tip == 1) {
 			// Read PMU sensor data from file
-			(*sensors_array)[i].sensor_type = PMU;
-			(*sensors_array)[i].sensor_data =
-				(void *) malloc(sizeof(power_management_unit));
-			power_management_unit *pmu_data =
-				(power_management_unit *)((*sensors_array)[i].sensor_data);
-			fread(&pmu_data->voltage, sizeof(float), 1, fin);
-			fread(&pmu_data->current, sizeof(float), 1, fin);
-			fread(&pmu_data->power_consumption, sizeof(float), 1, fin);
-			fread(&pmu_data->energy_regen, sizeof(int), 1, fin);
-			fread(&pmu_data->energy_storage, sizeof(int), 1, fin);
+			sensor sensor = fread_PMU_sensor_values(fin);
+
+			if (!pmu_sensors_head) {
+				pmu_sensors_head = pmu_sensors_tail = new_list_node(sensor);
+			} else {
+				pmu_sensors_tail->next = new_list_node(sensor);
+				pmu_sensors_tail = pmu_sensors_tail->next;
+			}
+
 		} else if (tip == 0) {
 			// Read TIRE sensor data from file
-			(*sensors_array)[i].sensor_type = TIRE;
-			(*sensors_array)[i].sensor_data =
-				(void *) malloc(sizeof(tire_sensor));
-			tire_sensor *tire_data =
-				(tire_sensor *) (*sensors_array)[i].sensor_data;
-			fread(&tire_data->pressure, sizeof(float), 1, fin);
-			fread(&tire_data->temperature, sizeof(float), 1, fin);
-			fread(&tire_data->wear_level, sizeof(int), 1, fin);
-			fread(&tire_data->performace_score, sizeof(int), 1, fin);
-		}
+			sensor sensor = fread_tire_sensor_values(fin);
 
-		fread(&(*sensors_array)[i].nr_operations, sizeof(int), 1, fin);
-		(*sensors_array)[i].operations_idxs =
-			(int *) malloc((*sensors_array)[i].nr_operations * sizeof(int));
-		for (int j = 0; j < (*sensors_array)[i].nr_operations; j++) {
-			fread(&(*sensors_array)[i].operations_idxs[j],
-				sizeof(int), 1, fin);
+			if (!tire_sensors_head) {
+				tire_sensors_head = tire_sensors_tail = new_list_node(sensor);
+			} else {
+				tire_sensors_tail->next = new_list_node(sensor);
+				tire_sensors_tail = tire_sensors_tail->next;
+			}
 		}
+	}
+
+
+	// Concatenating linked lists will result in an array,
+	//     sorted by sensor priority
+	int idx = 0;
+	for (ListNode *iter = pmu_sensors_head; iter; ) {
+		ListNode *tmp = iter;
+		(*sensors_array)[idx++] = tmp->sensor;
+		iter = iter->next;
+		free(tmp);
+	}
+	for (ListNode *iter = tire_sensors_head; iter; ) {
+		ListNode *tmp = iter;
+		(*sensors_array)[idx++] = iter->sensor;
+		iter = iter->next;
+		free(tmp);
 	}
 
 	fclose(fin);
@@ -194,34 +267,6 @@ void print_all_sensor_types(int num_sensors, sensor *sensors_array)
 }
 
 
-/* keep it simple ;)
-*
-* Sort the sensors array by iterating it twice:
-* 1. first time we get the PMU sensors in the order in which they appear
-* 2. second time we get the TIRE sensors
-*/
-void priority_sort_sensors(int num_sensors, sensor *sensors_array)
-{
-	sensor *tmp_array =
-		(sensor *) malloc(num_sensors* sizeof(sensor));
-	int idx = 0;
-	for (int i = 0; i < num_sensors; i++) {
-		if (sensors_array[i].sensor_type == PMU) {
-			tmp_array[idx++] = sensors_array[i];
-		}
-	}
-	for (int i = 0; i < num_sensors; i++) {
-		if (sensors_array[i].sensor_type == TIRE) {
-			tmp_array[idx++] = sensors_array[i];
-		}
-	}
-	for (int i = 0; i < num_sensors; i++) {
-		sensors_array[i] = tmp_array[i];
-	}
-
-	free(tmp_array);
-}
-
 
 void command_print(int num_sensors, sensor *sensors_array)
 {
@@ -232,6 +277,8 @@ void command_print(int num_sensors, sensor *sensors_array)
 	} else {
 		printf("Index not in range!\n");
 	}
+
+
 }
 
 
@@ -301,9 +348,7 @@ int main(int argc, char const *argv[])
 
 	int num_sensors;
 	sensor *sensors_array;
-	read_sensors_file(argv[1], &num_sensors, &sensors_array);
-
-	priority_sort_sensors(num_sensors, sensors_array);
+	fread_sensors_array(argv[1], &num_sensors, &sensors_array);
 
 	char *command = (char *) malloc(COMMAND_BUFFER_LEGNTH * sizeof(char));
 	while (1) {

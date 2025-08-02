@@ -7,7 +7,7 @@ ALOCARE
 
 SORTARE
     La sortarea senzorilor din pointeri, trebuie sa tinem cont de faptul ca trebuie pastrata ordine in care senzorii de acelasi tip apar.de exemplu : TIRE_1, TIRE_2, PMU_1, PMU_2, TIRE_3, PMU_3 => PMU_1, PMU_2, PMU_3, TIRE_1, TIRE_2, TIRE_3
-    O metoda de sortatre, pe care eu am considerat-o eficienta si usor de implementat, consta in a lua un pointer auxiliar de senzori, initial vid si vom parcurge senzorii (de la stanga la dreapta) de doua ori: la prima iteratie vom adauga in pointer-ul auxiliar doar senzorii PMU, iar in a doua, doar pe cei care masoara parametrii anvelopelor. La final, vom inlocui (fiecare element al) pointer - ul(ui) initial si cel auxiliar. Astfel, sortarea are o complexitate in timp de O(2 * N) = O(N) ; N = numarul total de senzori. 
+    TODO: explica-te
 
 ANALYZE (APEL DE FUNCTII)
     Pentru a apela functiile, creem un pointer de opt elemente, care vor indica catre toate functiile. Pentru apelul efectiv al functiei, va trebui sa facem casting la pointer pentru a extrage functia dorita. Apelul se face folosind campul senso_data al structului pentru senzori.

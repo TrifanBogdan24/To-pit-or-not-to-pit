@@ -32,4 +32,10 @@ typedef struct __attribute__((__packed__)) {
 
 
 
+typedef struct node {
+	sensor sensor;
+	struct node *next;
+} ListNode;
+
+
 #endif // _STRUCTS_H_
