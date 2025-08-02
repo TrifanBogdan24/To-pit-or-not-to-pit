@@ -1,7 +1,7 @@
 # 🏎️ To pit or not pit...
 
-A **memory management** CLI app, built in **C**
-to analyze sensors data of a Ferrari **Formula 1** car.
+A **data management** CLI app, built in **C**
+to analyze sensors values of a Ferrari **Formula 1** car.
 
 
 > ⚠️ Spoiler Alert!
