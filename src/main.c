@@ -213,8 +213,10 @@ void fread_sensors_array(char const *file_path,
 			sensor sensor = fread_PMU_sensor_values(fin);
 
 			if (!pmu_sensors_head) {
+				// Initialize linked list
 				pmu_sensors_head = pmu_sensors_tail = new_list_node(sensor);
 			} else {
+				// Append to the end of list
 				pmu_sensors_tail->next = new_list_node(sensor);
 				pmu_sensors_tail = pmu_sensors_tail->next;
 			}
@@ -224,8 +226,10 @@ void fread_sensors_array(char const *file_path,
 			sensor sensor = fread_tire_sensor_values(fin);
 
 			if (!tire_sensors_head) {
+				// Initialize linked list
 				tire_sensors_head = tire_sensors_tail = new_list_node(sensor);
 			} else {
+				// Append to the end of list
 				tire_sensors_tail->next = new_list_node(sensor);
 				tire_sensors_tail = tire_sensors_tail->next;
 			}
