@@ -303,5 +303,3 @@ The overnight testing is automatically triggered by `method-1` branch.
 > ⏱️ ONLY the **default branch** can run scheduled jobs.
 >
 > ⚠️ Therefore, it would be redundant to configure a workflow here.
-```
-
