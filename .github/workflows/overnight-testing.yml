@@ -1,16 +1,11 @@
-name: Run Checker Tests on Method-1
+name: 🌃 Run Overnight Tests on Method-1
+
 
 on:
-  push:
-    branches: method-1
-  pull_request:
-    branches: method-1
-
-
-concurrency:
-  # cancels the previous in-flight run in this group
-  group: testing-${{ github.ref }}
-  cancel-in-progress: true
+  schedule:
+    # Overnight: run tests every day at 23:00 UTC
+    # Usage: cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
+    - cron: "0 23 * * *"
 
 
 jobs:
