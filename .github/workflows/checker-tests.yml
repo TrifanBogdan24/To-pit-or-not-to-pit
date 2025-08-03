@@ -1,12 +1,10 @@
-name: Run Checker Tests on Method-1
+name: Run Checker Tests
 
 on:
   push:
-    branches:
-      - method-1
+    branches: ["method-1", "method-2"]
   pull_request:
-    branches:
-      - method-1
+    branches: ["method-1", "method-2"]
 
   schedule:
     # Overnight: run tests every day at 23:00 UTC
