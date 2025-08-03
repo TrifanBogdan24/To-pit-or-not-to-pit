@@ -286,20 +286,31 @@ Take a look at the [checker/](./checker/) folder.
 ### 🧪 GitHub Actions | CI Pipeline
 ---
 
-> 👉 Workflow is configured in **default branch** (`method-1`).
-
 No test suite is complete without **Continous Integration**.
 
 I've set up the automated checker with **GitHub Actions**
 to run tests on every push and pull request.
 
+Take a look at the CI workflow here:
+[.github/workflows/checker-tests.yml](.github/workflows/checker-tests.yml).
 
 
 ### 🌃 Overnight Testing
 ---
 
-The overnight testing is automatically triggered by `method-1` branch.
+Tests not only **run at every commit/pull request**,
+but furthermore, I've configured the CI process
+to automatically run an **overnight testing** in GitHub Actions
+from [this](.github/workflows/overnight-testing.yml) workflow file.
 
-> ⏱️ ONLY the **default branch** can run scheduled jobs.
->
-> ⚠️ Therefore, it would be redundant to configure a workflow here.
+```yml
+on:
+  schedule:
+    # Overnight: run tests every day at 23:00 UTC
+    - cron: "0 23 * * *"
+```
+
+Let's break the `cron` field down:
+```yml
+cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
+```
