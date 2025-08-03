@@ -45,11 +45,11 @@ jobs:
           chmod +x ./checker/coding-style/checkpatch.pl ./checker/coding-style/cs.sh
           ./checker/coding-style/cs.sh src/ 2>&1 | tee checker/coding_style.txt
 
-      - name: Upload test logs as artifacts
+      - name: Upload test logs as artifacts for ${{ matrix.branch }}
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: checker-logs
+          name: checker-logs-${{ matrix.branch }}
           path: |
             checker/test_results.txt
             checker/coding_style.txt
