@@ -298,19 +298,10 @@ Take a look at the CI workflow here:
 ### 🌃 Overnight Testing
 ---
 
-Tests not only **run at every commit/pull request**,
-but furthermore, I've configured the CI process
-to automatically run an **overnight testing** in GitHub Actions
-from [this](.github/workflows/overnight-testing.yml) workflow file.
+The overnight testing is automatically triggered by `method-1` branch.
 
-```yml
-on:
-  schedule:
-    # Overnight: run tests every day at 23:00 UTC
-    - cron: "0 23 * * *"
+> ⏱️ ONLY the **default branch** can run scheduled jobs.
+>
+> ⚠️ Therefore, it would be redundant to configure a workflow here.
 ```
 
-Let's break the `cron` field down:
-```yml
-cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
-```
