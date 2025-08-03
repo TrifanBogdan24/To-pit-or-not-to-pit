@@ -23,6 +23,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        branch: ["method-1", "method-2"]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
