@@ -279,9 +279,10 @@ Take a look at the CI workflow here:
 ### 🌃 Overnight Testing
 ---
 
-Tests not only **run at every commit/pull request**,
-but furthermore, I've configured the CI process
-to automatically run an **overnight testing** in GitHub Actions
+Tests not only **run at every commit/pull request**.
+
+Furthermore, I've extended the CI process
+to automatically run an **overnight testing** in GitHub Actions (for all branches)
 from [this](.github/workflows/overnight-testing.yml) workflow file.
 
 ```yml
