@@ -9,6 +9,12 @@ to analyze sensors values of a Ferrari **Formula 1** car.
 
 > Sensors values have already been 'collected' and stored in `*.dat` **binary files**.
 
+## 👨‍💻 Preview
+
+
+![gif](./preview.gif)
+
+
 ## Story Telling
 
 In this **fictional scenario in which my project takes place**,
@@ -87,11 +93,6 @@ It will delete mulfunctioning sensors (containing error-prone values) from the a
 
 Gracefully shut down the program after free-ing the memory.
 
-
-## 👨‍💻 Preview
-
-
-![gif](./preview.gif)
 
 
 ## ▶️ How to run the CLI app
