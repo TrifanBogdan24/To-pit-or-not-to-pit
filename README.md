@@ -274,7 +274,7 @@ I've set up the automated checker with **GitHub Actions**
 to run tests on every push and pull request.
 
 Take a look at the CI workflow here:
-[.github/workflows/checker-tests.yml](.github/workflows/checker-tests.yml).
+[.github/workflows/CI-checker-tests.yml](.github/workflows/CI-checker-tests.yml).
 
 
 ### 🌃 Overnight Testing
@@ -284,7 +284,7 @@ Tests not only **run at every commit/pull request**.
 
 Furthermore, I've extended the CI process
 to automatically run an **overnight testing** in GitHub Actions (for all branches)
-from [this](.github/workflows/overnight-testing.yml) workflow file.
+from [this](.github/workflows/CI-overnight-testing.yml) workflow file.
 
 ```yml
 on:
