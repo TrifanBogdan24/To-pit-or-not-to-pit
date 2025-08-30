@@ -12,7 +12,7 @@ to analyze sensors values of a Ferrari **Formula 1** car.
 ## 👨‍💻 Preview
 
 
-![gif](./preview.gif)
+![gif](../preview.gif)
 
 
 ## Story Telling
@@ -33,7 +33,7 @@ In this scenario, there are 2 types of faulty sensors in a Formula 1 car:
 1. **PMU** (Power Management Unit) Sensors
 2. **Tire** Sensors
 
-Each sensor type has its priority and associated function callss.
+Each sensor type has its priority and associated function calls.
 
 
 
@@ -92,6 +92,8 @@ It will delete mulfunctioning sensors (containing error-prone values) from the a
 ---
 
 Gracefully shut down the program after free-ing the memory.
+
+
 
 
 
@@ -189,37 +191,56 @@ The vector will contain the sensors in the following order (sorted by priority):
 PMU_1 PMU_2 PMU_3 PMU_4 Tire_1 Tire_2 Tire_3 Tire_4 Tire_5
 ```
 
-
-### Sorting Sensors
+### 🔗 Sorting Sensors using **Linked Lists**
 ---
 
 
-When sorting sensors from pointers,
-I took into account the fact that order (in which sensors of the same type appear) must be kept.
+Sorting the array of sensors by type takes place while reading the input file.
 
-A sorting method, which I considered to be more appropriate to me and easy to implement,
-consists of taking an auxiliary pointer of sensors,
-initially empty and **iterating** the sensors (from left to right) **twice**:
-1. During the first iteration: I added only the **PMU** sensors to the auxiliary pointer
-2. In the second: only those who measure **Tire** parameters/
+Let me walk you through.
 
-At the end, I replaced (each element of) the initial pointer(s) with the auxiliary one.
-
-Thus, sorting has a time complexity of `O(2 * N) = O(N)`
-where **N** is the total number of sensors.
+To store sensors and group them by type, I used **two linked lists**
+1. 🔗 one for **PMU** sensors
+2. 🔗 the second one for **Tire** sensors
 
 
-> 💡 Another (*perhaps more efficient method*) would have been 
-> to build two **linked lists** as we read the sensors:
-> 1. 🔗 one for **PMU** sensors
-> 2. 🔗 another one for **Tire** values
->
-> Concattenating the lists would result in an array, sorted by sensor type.
+```c
+typedef struct node {
+  sensor sensor;
+  struct node *next;
+} ListNode;
+```
+
+> 🎯 With this **data structure**,
+> I achieved to preserve the original file order for each sensor type.
+
+Keeping a **pointer to the end of each list** (tail pointer)
+**makes append operations faster**,
+in just `O(1)`, without having to iterate the list before adding a new sensor.
 
 
-> 🎯 Even though more complex methods may exist,
-> the one that I choose aligns better with the goals and context of my implementation.
+Let's take a look at **PMU** sensor for example:
+```c
+// Read PMU sensor data from file
+sensor sensor = fread_PMU_sensor_values(fin);
 
+if (!pmu_sensors_head) {
+  // Initialize linked list
+  pmu_sensors_head = pmu_sensors_tail = new_list_node(sensor);
+} else {
+  // Append to the end of list
+  pmu_sensors_tail->next = new_list_node(sensor);
+  pmu_sensors_tail = pmu_sensors_tail->next;
+}
+```
+
+After reading, I **concatenated** both lists **into an array**
+(deallocating memory as I iterate them).
+
+The resulted array will contain all **PMU** sensors first,
+followed by all **Tire** sensors.
+
+Excluding file I/O, sorting runs at a **time complexity** of exact `Θ(N)`.
 
 ### Analyze Sensors (Function call)
 ---
@@ -280,20 +301,8 @@ Take a look at the CI workflow here:
 ### 🌃 Overnight Testing
 ---
 
-Tests not only **run at every commit/pull request**.
+The overnight testing is automatically triggered by `method-1` branch.
 
-Furthermore, I've extended the CI process
-to automatically run an **overnight testing** in GitHub Actions (for all branches)
-from [this](.github/workflows/CI-overnight-testing.yml) workflow file.
-
-```yml
-on:
-  schedule:
-    # Overnight: run tests every day at 23:00 UTC
-    - cron: "0 23 * * *"
-```
-
-Let's break the `cron` field down:
-```yml
-cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
-```
+> ⏱️ ONLY the **default branch** can run scheduled jobs.
+>
+> ⚠️ Therefore, it would be redundant to configure a workflow here.
