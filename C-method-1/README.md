@@ -119,9 +119,9 @@ make clean
 ## `>_` User Input
 
 - **Command line argument**: path to the `*.dat` file containing sensors data
-  - > Use `sensors_*.dat` from [`checker/input/`](./checker/input/)
+  - > Use `sensors_*.dat` from [`checker/input/`](tests_data/input)
 - **Stdandard input**: the *"operations"* to perform on sensors data
-  - > Use `commands_*.in` from [`checker/input/`](./checker/input/)
+  - > Use `commands_*.in` from [`checker/input/`](tests_data/input)
 
 💡 A more elegant solution to run the executable
 would be to use **input redirection** (`<`) to provide commands from a file,
@@ -262,7 +262,7 @@ if (0 <= idx && idx <= num_sensors - 1) {
 
 Curious how everything gets tested automatically?
 
-Take a look at the [checker/](./checker/) folder.
+Take a look at the [checker/](tests_data) folder.
 
 
 ### 🧪 GitHub Actions | CI Pipeline

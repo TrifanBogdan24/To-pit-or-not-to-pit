@@ -1,23 +1,12 @@
-name: Run Checker Tests on Method-2
+name: Run Checker Tests on C-Method-2
 
 on:
   push:
-    branches:
-      - method-2
+    branches: main
+    paths: ['tests_data/**', '.github/workflows/**', 'C-method-2/**']
   pull_request:
-    branches:
-      - method-2
-
-  schedule:
-    # Overnight: run tests every day at 23:00 UTC
-    # Usage: cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
-    - cron: "0 23 * * *"
-
-
-concurrency:
-  # cancels the previous in-flight run in this group
-  group: testing-${{ github.ref }}
-  cancel-in-progress: true
+    branches: main
+    paths: ['tests_data/**', '.github/workflows/**', 'C-method-2/**']
 
 
 
@@ -34,14 +23,15 @@ jobs:
           sudo apt update
           sudo apt install -y python3 valgrind
 
-      - name: Run implementation correctness tests & memory check with Valgrind
-        working-directory: ./checker
+      - name: Run implementation tests & memory check with Valgrind
+        working-directory: ./C-method-2/tests
         run: python3 checker.py --all --valgrind --output 2>&1 | tee test_results.txt
       
       - name: Coding Style checker
+        # directory not specified => running from repo's root
         run: |
-          chmod +x ./checker/coding-style/checkpatch.pl ./checker/coding-style/cs.sh
-          ./checker/coding-style/cs.sh src/ 2>&1 | tee checker/coding_style.txt
+          chmod +x ./C-coding-style/checkpatch.pl ./C-coding-style/cs.sh
+          ./C-coding-style/cs.sh C-method-2/src 2>&1 | tee ./C-method-2/tests/coding_style.txt
 
       - name: Upload test logs as artifacts
         if: always()
@@ -49,8 +39,9 @@ jobs:
         with:
           name: checker-logs
           path: |
-            checker/test_results.txt
-            checker/coding_style.txt
-            checker/output/
-            checker/valgrind_logs/
+            C-method-2/tests/test_results.txt
+            C-method-2/tests/coding_style.txt
+            # Without `*` globbing, folders files will not be uploaded
+            tests_data/output-C-method-2/*
+            tests_data/valgrind_logs-C-method-2/*
           retention-days: 5

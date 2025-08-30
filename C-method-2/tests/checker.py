@@ -31,7 +31,6 @@ if len(sys.argv) == 1:
 
 withValgrind = False
 memLogFileFlag = "--log-file="
-memLogDir = "valgrind_logs"
 memLineCheck = "All heap blocks were freed -- no leaks are possible"
 memPoints = 0
 valgrindFlags = "--leak-check=full --show-leak-kinds=all --track-origins=yes"
@@ -42,10 +41,11 @@ if args.valgrind:
 execName = "main"
 execDir = "../src"
 execPath = f"{execDir}/{execName}"
-testsDir = "input"
-outputDir = "output"
-refDir = "ref"
-csChecker = "coding-style/cs.sh"
+testsDir = "../../tests_data/input"
+outputDir = "../../tests_data/output-C-method-2"
+memLogDir = "../../tests_data/valgrind_logs-C-method-2"
+refDir = "../../tests_data/ref"
+csChecker = "../../C-coding-style/cs.sh"
 
 runExec = "./" + execPath
 
