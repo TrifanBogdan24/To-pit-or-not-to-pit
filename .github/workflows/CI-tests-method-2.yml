@@ -1,0 +1,56 @@
+name: Run Checker Tests on Method-2
+
+on:
+  push:
+    branches:
+      - method-2
+  pull_request:
+    branches:
+      - method-2
+
+  schedule:
+    # Overnight: run tests every day at 23:00 UTC
+    # Usage: cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
+    - cron: "0 23 * * *"
+
+
+concurrency:
+  # cancels the previous in-flight run in this group
+  group: testing-${{ github.ref }}
+  cancel-in-progress: true
+
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (Python3 & Valgrind)
+        run: |
+          sudo apt update
+          sudo apt install -y python3 valgrind
+
+      - name: Run implementation correctness tests & memory check with Valgrind
+        working-directory: ./checker
+        run: python3 checker.py --all --valgrind --output 2>&1 | tee test_results.txt
+      
+      - name: Coding Style checker
+        run: |
+          chmod +x ./checker/coding-style/checkpatch.pl ./checker/coding-style/cs.sh
+          ./checker/coding-style/cs.sh src/ 2>&1 | tee checker/coding_style.txt
+
+      - name: Upload test logs as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checker-logs
+          path: |
+            checker/test_results.txt
+            checker/coding_style.txt
+            checker/output/
+            checker/valgrind_logs/
+          retention-days: 5
