@@ -121,3 +121,52 @@ would be to use **input redirection** (`<`) to provide commands from a file,
 as shown in the examples above.
 
 
+
+## Multiple Implementations
+
+Two independent implementations of the same project are provided,
+each in its own subdirectory:
+
+- [`C-method-1`](C-method-1)
+- [`C-method-2`](C-method-2)
+
+
+### 🧪 GitHub Actions | CI Pipeline
+---
+
+No test suite is complete without **Continous Integration**.
+
+I've set up the automated checker with **GitHub Actions**
+to run tests on every push and pull request.
+
+Take a look at the CI workflows here:
+
+| Method name | Workflow file |
+| :--- | :--- |
+| `C-method-1` | [.github/workflows/CI-tests-method-1.yml](.github/workflows/CI-tests-method-1.yml) |
+| `C-method-2` | [.github/workflows/CI-tests-method-2.yml](.github/workflows/CI-tests-method-2.yml) |
+
+<!-- TODO:
+
+### 🌃 Overnight Testing
+---
+
+Tests not only **run at every commit/pull request**.
+
+Furthermore, I've extended the CI process
+to automatically run an **overnight testing** in GitHub Actions (for all branches)
+from [this](.github/workflows/CI-overnight-testing.yml) workflow file.
+
+```yml
+on:
+  schedule:
+    # Overnight: run tests every day at 23:00 UTC
+    - cron: "0 23 * * *"
+```
+
+Let's break the `cron` field down:
+```yml
+cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
+```
+
+ -->

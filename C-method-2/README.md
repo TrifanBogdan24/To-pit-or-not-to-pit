@@ -277,32 +277,9 @@ if (0 <= idx && idx <= num_sensors - 1) {
 
 
 
-
-
-## ✅🔁 Automated Tests
+## ✅🔁 Automated Testing
 
 Curious how everything gets tested automatically?
 
-Take a look at the [checker/](./checker/) folder.
+Take a look at the [tests/](./tests/) folder.
 
-
-### 🧪 GitHub Actions | CI Pipeline
----
-
-No test suite is complete without **Continous Integration**.
-
-I've set up the automated checker with **GitHub Actions**
-to run tests on every push and pull request.
-
-Take a look at the CI workflow here:
-[.github/workflows/CI-checker-tests.yml](.github/workflows/CI-checker-tests.yml).
-
-
-### 🌃 Overnight Testing
----
-
-The overnight testing is automatically triggered by `method-1` branch.
-
-> ⏱️ ONLY the **default branch** can run scheduled jobs.
->
-> ⚠️ Therefore, it would be redundant to configure a workflow here.
