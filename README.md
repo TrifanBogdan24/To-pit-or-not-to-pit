@@ -109,12 +109,29 @@ It will delete mulfunctioning sensors (containing error-prone values) from the a
 Gracefully shut down the program after free-ing the memory.
 
 
+## Sensor Priority
+
+
+Ferrari’s telemetry prioritizes **PMU** readings over **Tire** readings.
+The output array must have **all PMU sensors first**, followed by all Tire sensors.
+
+If we receive the following input (read order):
+```
+Tire_1 Tire_2 PMU_1 PMU_2 Tire_3 PMU_3 Tire_4 Tire_5 PMU_4
+```
+
+The vector will contain the sensors in the following order (sorted by priority):
+```
+PMU_1 PMU_2 PMU_3 PMU_4 Tire_1 Tire_2 Tire_3 Tire_4 Tire_5
+```
+
+
 ## `>_` User Input
 
 - **Command line argument**: path to the `*.dat` file containing sensors data
-  - > Use `sensors_*.dat` from [`checker/input/`](./checker/input/)
+  - > Use `sensors_*.dat` from [`tests_data/input/`](./tests_data/input/)
 - **Stdandard input**: the *"operations"* to perform on sensors data
-  - > Use `commands_*.in` from [`checker/input/`](./checker/input/)
+  - > Use `commands_*.in` from [`tests_data/input/`](./tests_data/input/)
 
 💡 A more elegant solution to run the executable
 would be to use **input redirection** (`<`) to provide commands from a file,
@@ -129,6 +146,66 @@ each in its own subdirectory:
 
 - [`C-method-1`](C-method-1)
 - [`C-method-2`](C-method-2)
+
+
+## ▶️ How to run the CLI app written in C
+
+
+```sh
+cd src/
+make
+./main ../checker/input/<sensor-file>.dat < ../checker/input/<command-file>.in
+```
+
+Example:
+
+```sh
+./main ../checker/input/sensors_print_easy_1.dat < ../checker/input/commands_print_easy_1.in
+```
+
+🧹 Don't forget to remove the object and binary files:
+```sh
+make clean
+```
+
+
+
+## C Data Structures for Sensors
+
+
+Sensor:
+```c
+typedef struct {
+	enum sensor_type sensor_type;
+	void *sensor_data;
+	int nr_operations;
+	int *operations_idxs;
+} sensor;
+```
+
+
+**PMU** sensor data:
+```c
+typedef struct __attribute__((__packed__)) {
+	float voltage;
+	float current;
+	float power_consumption;
+	int energy_regen;
+	int energy_storage;
+} power_management_unit;
+```
+
+
+**Tire** sensor data:
+```c
+typedef struct __attribute__((__packed__)) {
+	float pressure;
+	float temperature;
+	int wear_level;
+	int performace_score;
+} tire_sensor;
+
+```
 
 
 ### 🧪 GitHub Actions | CI Pipeline
@@ -146,7 +223,6 @@ Take a look at the CI workflows here:
 | `C-method-1` | [.github/workflows/CI-tests-method-1.yml](.github/workflows/CI-tests-method-1.yml) |
 | `C-method-2` | [.github/workflows/CI-tests-method-2.yml](.github/workflows/CI-tests-method-2.yml) |
 
-<!-- TODO:
 
 ### 🌃 Overnight Testing
 ---
@@ -154,19 +230,16 @@ Take a look at the CI workflows here:
 Tests not only **run at every commit/pull request**.
 
 Furthermore, I've extended the CI process
-to automatically run an **overnight testing** in GitHub Actions (for all branches)
-from [this](.github/workflows/CI-overnight-testing.yml) workflow file.
+to automatically run an **overnight testing** in GitHub Actions (for all branches).
 
 ```yml
 on:
   schedule:
-    # Overnight: run tests every day at 23:00 UTC
-    - cron: "0 23 * * *"
+    # Overnight: run tests every Friday at 23:00 UTC
+    - cron: "0 23 * * 5"
 ```
 
 Let's break the `cron` field down:
 ```yml
 cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
 ```
-
- -->

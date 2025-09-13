@@ -8,7 +8,10 @@ on:
     branches: main
     paths: ['tests_data/**', '.github/workflows/**', 'C-method-1/**']
 
-
+  schedule:
+    # Overnight: run tests every Friday at 23:00 UTC
+    # cron <minute> <hour> <day-of-month> <day-of-week (sunday=0)>
+    - cron: "0 23 * * 5"
 
 jobs:
   test:
